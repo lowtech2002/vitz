@@ -7,9 +7,9 @@
   "theme_color": "#16a34a",
   "icons": [
     {
-      "src": "vitz.jpg",
+      "src": "vitz.png",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/png"
     }
   ]
 }
