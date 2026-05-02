@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<!-- saved from url=(0043)file:///Users/takuro/Downloads/vitz_26.html -->
-<html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Vitz予約</title>
-<link rel="apple-touch-icon" href="file:///Users/takuro/Downloads/vitz.png">
-<link rel="icon" type="image/png" href="file:///Users/takuro/Downloads/vitz.png">
-<link rel="manifest" href="file:///Users/takuro/Downloads/manifest.json">
+<link rel="apple-touch-icon" href="vitz.png">
+<link rel="icon" type="image/png" href="vitz.png">
+<link rel="manifest" href="manifest.json">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; background: #fefce8; color: #1a1a1a; font-size: 14px; }
@@ -77,34 +78,39 @@ select { font-family: inherit; }
     <div style="flex:1"><h1>Vitz予約</h1></div>
   </div>
   <div style="display:flex;gap:8px">
-    <button class="user-btn" id="btn-father" onclick="selectUser(&#39;father&#39;)">
+    <button class="user-btn" id="btn-father" onclick="selectUser('father')">
       <span style="font-size:19px">👨</span>博
     </button>
-    <button class="user-btn" id="btn-mother" onclick="selectUser(&#39;mother&#39;)">
+    <button class="user-btn" id="btn-mother" onclick="selectUser('mother')">
       <span style="font-size:19px">👩</span>恭子
     </button>
   </div>
   <div id="hint" style="display:none"></div>
 </div>
 
+<div id="dup-banner" class="hidden" style="background:#374151;color:white;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600">
+  <span id="dup-banner-txt">📋 複製先の日付をタップしてください</span>
+  <button onclick="cancelDuplicate()" style="background:none;border:none;color:white;font-size:18px;line-height:1">✕</button>
+</div>
+
 <div id="tabs">
-  <button class="tab-btn active" onclick="switchView(&#39;month&#39;)">🗓 月</button>
-  <button class="tab-btn" onclick="switchView(&#39;week&#39;)">📅 週</button>
-  <button class="tab-btn" onclick="switchView(&#39;list&#39;)">📋 一覧</button>
+  <button class="tab-btn active" onclick="switchView('month')">🗓 月</button>
+  <button class="tab-btn" onclick="switchView('week')">📅 週</button>
+  <button class="tab-btn" onclick="switchView('list')">📋 一覧</button>
 </div>
 
 <div id="view-month">
   <div style="display:flex;align-items:center;padding:10px 14px;background:white;border-bottom:1px solid #e5e7eb;position:relative">
     <div style="position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px">
-      <button class="nav-btn" onclick="prevMonth()">‹</button>
-      <span id="month-title" style="font-size:14px;font-weight:400;white-space:nowrap">2026年 5月</span>
-      <button class="nav-btn" onclick="nextMonth()">›</button>
+      <button class="nav-btn" onclick="prevMonth()">&#8249;</button>
+      <span id="month-title" style="font-size:14px;font-weight:400;white-space:nowrap"></span>
+      <button class="nav-btn" onclick="nextMonth()">&#8250;</button>
     </div>
     <div style="margin-left:auto;display:flex;align-items:center">
-      <button onclick="goToday(&#39;month&#39;)" style="background:#009261;color:white;border:none;border-radius:7px;padding:0 8px;font-size:11px;font-weight:600;white-space:nowrap;height:34px">今日</button>
+      <button onclick="goToday('month')" style="background:#009261;color:white;border:none;border-radius:7px;padding:0 8px;font-size:11px;font-weight:600;white-space:nowrap;height:34px">今日</button>
     </div>
   </div>
-  <div class="legend" id="month-legend"><div class="legend-item"><div class="legend-dot" style="background:#2563eb"></div>👨</div><div class="legend-item"><div class="legend-dot" style="background:#db2777"></div>👩</div></div>
+  <div class="legend" id="month-legend"></div>
   <div style="display:grid;grid-template-columns:repeat(7,1fr);background:white;border-bottom:1px solid #e5e7eb">
     <div style="text-align:center;padding:5px 0;font-size:11px;font-weight:700;color:#d7083c">日</div>
     <div style="text-align:center;padding:5px 0;font-size:11px;font-weight:700;color:#6b7280">月</div>
@@ -114,7 +120,7 @@ select { font-family: inherit; }
     <div style="text-align:center;padding:5px 0;font-size:11px;font-weight:700;color:#6b7280">金</div>
     <div style="text-align:center;padding:5px 0;font-size:11px;font-weight:700;color:#3b82f6">土</div>
   </div>
-  <div id="month-grid"><div class="day-cell other"><div class="day-num"><span style="color:#d7083c;font-weight:400">26</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">27</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">28</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">29</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">30</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">1</span></div></div><div class="day-cell today"><div class="day-num today"><span style="color:white;font-weight:700">2</span></div><div class="res-badge" style="background:#db2777">恭子 10:30〜</div><div class="res-badge" style="background:#2563eb">博 11:45〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#d7083c;font-weight:400">3</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">4</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">5</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">6</span></div><div class="res-badge" style="background:#2563eb">博 6:30〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">7</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">8</span></div><div class="res-badge" style="background:#2563eb">博 11:45〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#3b82f6;font-weight:400">9</span></div><div class="res-badge" style="background:#db2777">恭子 16:00〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#d7083c;font-weight:400">10</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">11</span></div><div class="res-badge" style="background:#2563eb">博 6:30〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">12</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">13</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">14</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">15</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#3b82f6;font-weight:400">16</span></div><div class="res-badge" style="background:#2563eb">博 11:45〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#d7083c;font-weight:400">17</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">18</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">19</span></div><div class="res-badge" style="background:#2563eb">博 6:30〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">20</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">21</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">22</span></div><div class="res-badge" style="background:#2563eb">博 11:45〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#3b82f6;font-weight:400">23</span></div><div class="res-badge" style="background:#db2777">恭子 16:00〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#d7083c;font-weight:400">24</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">25</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">26</span></div><div class="res-badge" style="background:#2563eb">博 6:30〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">27</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">28</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">29</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#3b82f6;font-weight:400">30</span></div><div class="res-badge" style="background:#2563eb">博 11:45〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#d7083c;font-weight:400">31</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">1</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">2</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">3</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">4</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">5</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#3b82f6;font-weight:400">6</span></div></div></div>
+  <div id="month-grid"></div>
   <div id="detail-panel">
     <div class="detail-head">
       <span id="detail-title" style="font-size:13px;font-weight:700;color:#009261"></span>
@@ -130,12 +136,12 @@ select { font-family: inherit; }
 <div id="view-week" class="hidden">
   <div style="display:flex;align-items:center;padding:10px 14px;background:white;border-bottom:1px solid #e5e7eb;position:relative">
     <div style="position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px">
-      <button class="nav-btn" onclick="prevWeek()">‹</button>
+      <button class="nav-btn" onclick="prevWeek()">&#8249;</button>
       <span id="week-title" style="font-size:14px;font-weight:400;white-space:nowrap"></span>
-      <button class="nav-btn" onclick="nextWeek()">›</button>
+      <button class="nav-btn" onclick="nextWeek()">&#8250;</button>
     </div>
     <div style="margin-left:auto;display:flex;align-items:center">
-      <button onclick="goToday(&#39;week&#39;)" style="background:#009261;color:white;border:none;border-radius:7px;padding:0 8px;font-size:11px;font-weight:600;white-space:nowrap;height:34px">今日</button>
+      <button onclick="goToday('week')" style="background:#009261;color:white;border:none;border-radius:7px;padding:0 8px;font-size:11px;font-weight:600;white-space:nowrap;height:34px">今日</button>
     </div>
   </div>
   <div class="legend" id="week-legend"></div>
@@ -231,6 +237,7 @@ let editId      = null;
 let modalDate   = null;
 let deleteTargetId = null;
 let formNote    = "";
+let duplicateSrc = null; // 複製元の予約
 
 function toM(h,m){ return h*60+m; }
 function mH(m){ return Math.floor(m/60); }
@@ -291,6 +298,7 @@ function renderMonth(){
     cell.innerHTML=`<div class="day-num${isT?" today":""}"><span style="color:${isT?"white":numColor};font-weight:${isT?700:400}">${date.getDate()}</span></div>${badges}`;
     if(inM){
       cell.onclick=()=>{
+        if(duplicateSrc){ openDuplicateModal(date); return; }
         if(dr.length>0){ detailDate=(isSel?null:ds); renderMonth(); renderDetail(); }
         else { openModal(date,9); }
       };
@@ -328,7 +336,7 @@ function renderWeek(){
     const {mo,da,dw}=fjp(date), isSun=date.getDay()===0, isSat=date.getDay()===6;
     const headCls=isT?"today":isSun?"sun":isSat?"sat":"";
     const cards=dr.sort((a,b)=>norm(a.startHour)-norm(b.startHour)).map(r=>resCardHTML(r,false)).join("");
-    const addBtn=currentUser?`<button class="btn-add" style="background:#009261" onclick="openModalByDateStr('${ds}',9)">＋ 予約</button>`:"";
+    const addBtn=currentUser||duplicateSrc?`<button class="btn-add" style="background:#009261" onclick="${duplicateSrc?`openDuplicateModal(new Date('${ds}T00:00:00'))`:`openModalByDateStr('${ds}',9)`}">${duplicateSrc?'📋 ここに複製':'＋ 予約'}</button>`:"";
     const numColor=isT?"white":isSun?"#d7083c":isSat?"#3b82f6":"#1a1a1a";
     return `<div class="week-card${isT?" today":""}">
       <div class="week-head ${headCls}" style="display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-bottom:1px solid #f0f0f0">
@@ -361,7 +369,7 @@ function resCardHTML(res, showDate){
   const u=userOf(res.userId), mine=currentUser?.id===res.userId;
   const {mo,da,dw}=fjp(new Date(res.date+"T00:00:00"));
   const dateCol=showDate?`<div style="text-align:center;min-width:34px"><div style="font-size:10px;color:#9ca3af">${mo}月</div><div style="font-size:17px;font-weight:700;color:${u?.color};line-height:1">${da}</div><div style="font-size:10px;color:#9ca3af">${dw}</div></div>`:`<span style="font-size:17px">${u?.emoji}</span>`;
-  const btns=mine?`<div style="display:flex;gap:5px;flex-shrink:0"><button class="btn-edit" onclick="openEditModal('${res.id}')">編集</button><button class="btn-del" onclick="openDelModal('${res.id}')">削除</button></div>`:"";
+  const btns=mine?`<div style="display:flex;gap:5px;flex-shrink:0"><button style="background:#6b7280;color:white;border:none;border-radius:7px;padding:5px 9px;font-size:11px;font-weight:600" onclick="startDuplicate('${res.id}')">複製</button><button class="btn-edit" onclick="openEditModal('${res.id}')">編集</button><button class="btn-del" onclick="openDelModal('${res.id}')">削除</button></div>`:"";
   return `<div class="res-card" style="background:${u?.color}12;border-color:${u?.color}33;border-left:4px solid ${u?.color}">${dateCol}<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:${u?.color}">${fmt(norm(res.startHour))}〜${fmt(norm(res.endHour))}</div><div style="font-size:11px;color:#6b7280">${u?.name}${res.note?`・${res.note}`:""}</div></div>${btns}</div>`;
 }
 
@@ -480,6 +488,46 @@ async function confirmDelete(){
   closeDelModal();
 }
 
+function startDuplicate(id){
+  const res=window._reservations.find(r=>r.id===id);
+  if(!res) return;
+  duplicateSrc=res;
+  document.getElementById("dup-banner").classList.remove("hidden");
+  document.getElementById("dup-banner-txt").textContent=`📋 複製先の日付をタップしてください（${res.date} ${fmt(norm(res.startHour))}〜${fmt(norm(res.endHour))}）`;
+  // 詳細パネルを閉じる
+  detailDate=null;
+  render();
+}
+
+function cancelDuplicate(){
+  duplicateSrc=null;
+  document.getElementById("dup-banner").classList.add("hidden");
+  render();
+}
+
+function openDuplicateModal(date){
+  if(!duplicateSrc) return;
+  const res=duplicateSrc;
+  const u=userOf(res.userId);
+  // 複製元のユーザーに切り替え
+  currentUser=u;
+  document.getElementById("btn-father").className="user-btn"+(currentUser?.id==="father"?" active":"");
+  document.getElementById("btn-mother").className="user-btn"+(currentUser?.id==="mother"?" active":"");
+  editId=null; modalDate=date; formNote=res.note||"";
+  initSelects();
+  setModalTime(norm(res.startHour), norm(res.endHour));
+  document.getElementById("modal-title").textContent="📋 予約を複製";
+  const {mo,da,dw}=fjp(date);
+  document.getElementById("modal-sub").textContent=`${mo}月${da}日（${dw}）・${u.emoji} ${u.name}`;
+  renderPurposeBtns(u);
+  document.getElementById("modal-err").classList.add("hidden");
+  document.getElementById("modal-save-btn").textContent="予約する";
+  document.getElementById("modal-overlay").classList.remove("hidden");
+  // 複製モード終了
+  duplicateSrc=null;
+  document.getElementById("dup-banner").classList.add("hidden");
+}
+
 function prevMonth(){ baseDate=new Date(baseDate.getFullYear(), baseDate.getMonth()-1, 1); detailDate=null; renderMonth(); }
 function nextMonth(){ baseDate=new Date(baseDate.getFullYear(), baseDate.getMonth()+1, 1); detailDate=null; renderMonth(); }
 function prevWeek(){ baseDate=new Date(baseDate); baseDate.setDate(baseDate.getDate()-7); renderWeek(); }
@@ -489,5 +537,5 @@ function goToday(view){ baseDate=new Date(); detailDate=null; if(view==='month')
 render();
 </script>
 
-
-</body></html>
+</body>
+</html>
