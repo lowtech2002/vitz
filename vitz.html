@@ -1,112 +1,80 @@
-
 <!DOCTYPE html>
-<!-- saved from url=(0042)file:///Users/takuro/Downloads/vitz_9.html -->
+<!-- saved from url=(0043)file:///Users/takuro/Downloads/vitz_14.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Vitz予約</title>
-<link rel="apple-touch-icon" href="vitz.png">
-<link rel="icon" type="image/png" href="vitz.png">
-<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="file:///Users/takuro/Downloads/vitz.png">
+<link rel="icon" type="image/png" href="file:///Users/takuro/Downloads/vitz.png">
+<link rel="manifest" href="file:///Users/takuro/Downloads/manifest.json">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; background: #f0fdf4; color: #1a1a1a; font-size: 14px; }
+body { font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; background: #fefce8; color: #1a1a1a; font-size: 14px; }
 button { cursor: pointer; font-family: inherit; border: none; }
 select { font-family: inherit; }
-
-/* ヘッダー */
-#header { background: linear-gradient(135deg, #14532d, #16a34a); color: white; padding: 18px 14px 14px; }
+#header { background: linear-gradient(135deg, #b8a000, #fee100); color: white; padding: 18px 14px 14px; }
 #header h1 { font-size: 18px; font-weight: 700; }
-#header p  { font-size: 10px; opacity: .8; }
-#conn-dot  { width: 7px; height: 7px; border-radius: 50%; background: #f87171; display: inline-block; margin-right: 4px; }
-#conn-dot.on { background: #86efac; }
-
-/* ユーザーボタン */
+#conn-dot { width: 7px; height: 7px; border-radius: 50%; background: #f87171; display: inline-block; margin-right: 4px; }
+#conn-dot.on { background: #fde047; }
 .user-btn { flex: 1; padding: 9px 6px; border-radius: 11px; border: 2px solid transparent; color: white; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 5px; }
 .user-btn#btn-father { background: #93c5fd; border-color: #93c5fd; color: #1e3a8a; }
 .user-btn#btn-father.active { background: #2563eb; border-color: white; color: white; }
 .user-btn#btn-mother { background: #f9a8d4; border-color: #f9a8d4; color: #831843; }
 .user-btn#btn-mother.active { background: #db2777; border-color: white; color: white; }
-.badge { font-size: 9px; background: white; color: #16a34a; border-radius: 5px; padding: 1px 5px; }
-
-/* タブ */
+.badge { font-size: 9px; background: white; color: #fee100; border-radius: 5px; padding: 1px 5px; }
 #tabs { display: flex; background: white; border-bottom: 1px solid #e5e7eb; }
 .tab-btn { flex: 1; padding: 11px 0; border: none; background: none; font-size: 12px; font-weight: 600; color: #9ca3af; border-bottom: 2.5px solid transparent; }
-.tab-btn.active { color: #16a34a; border-bottom-color: #16a34a; }
-
-/* ナビ行 */
+.tab-btn.active { color: #fee100; border-bottom-color: #fee100; }
 .nav-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: white; border-bottom: 1px solid #e5e7eb; }
 .nav-btn { background: #f3f4f6; border: none; border-radius: 8px; width: 34px; height: 34px; font-size: 18px; color: #374151; }
-
-/* 月グリッド */
 #month-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #e5e7eb; }
 .day-cell { background: white; min-height: 62px; padding: 3px; cursor: pointer; }
 .day-cell.other { opacity: .3; }
-.day-cell.today { background: #f0fdf4; }
-.day-cell.selected { background: #dcfce7; }
+.day-cell.today { background: #fefce8; }
+.day-cell.selected { background: #fef9c3; }
 .day-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; font-size: 11px; }
-.day-num.today { background: #16a34a; color: white; font-weight: 700; }
+.day-num.today { background: #fee100; color: white; font-weight: 700; }
 .res-badge { border-radius: 2px; font-size: 8px; font-weight: 600; padding: 1px 3px; color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 1px; }
-
-/* 詳細パネル */
 #detail-panel { margin: 8px 8px 0; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: none; }
 #detail-panel.open { display: block; }
-.detail-head { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; background: #dcfce7; border-bottom: 1px solid #16a34a44; }
-
-/* 週カード */
+.detail-head { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; background: #fef9c3; border-bottom: 1px solid #fee10044; }
 .week-card { margin-top: 7px; background: white; border-radius: 11px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
-.week-card.today { box-shadow: 0 0 0 2px #16a34a; }
+.week-card.today { box-shadow: 0 0 0 2px #fee100; }
 .week-head { display: flex; align-items: center; justify-content: space-between; padding: 7px 12px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
-.week-head.today { background: #f0fdf4; }
+.week-head.today { background: #fefce8; }
 .week-head.sun { background: #fff5f5; }
-.week-head.sat { background: #f0fdf4; }
-
-/* 予約カード */
+.week-head.sat { background: #fefce8; }
 .res-card { display: flex; align-items: center; gap: 8px; border-radius: 10px; padding: 8px 10px; border: 1px solid; margin-bottom: 5px; }
 .res-card:last-child { margin-bottom: 0; }
-
-/* ボタン */
 .btn-edit { background: #374151; color: white; border-radius: 7px; padding: 5px 9px; font-size: 11px; font-weight: 600; }
-.btn-del  { background: #ef4444; color: white; border-radius: 7px; padding: 5px 9px; font-size: 11px; font-weight: 600; }
-.btn-add  { color: white; border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 600; }
-.btn-green { background: #16a34a; color: white; border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 600; }
-.btn-primary { width: 100%; padding: 13px; border-radius: 11px; background: #16a34a; color: white; font-size: 14px; font-weight: 700; }
+.btn-del { background: #d7083c; color: white; border-radius: 7px; padding: 5px 9px; font-size: 11px; font-weight: 600; }
+.btn-add { color: white; border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 600; }
+.btn-green { background: #fee100; color: white; border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 600; }
+.btn-primary { width: 100%; padding: 13px; border-radius: 11px; background: #fee100; color: white; font-size: 14px; font-weight: 700; }
 .btn-cancel { flex: 1; padding: 11px; border-radius: 9px; border: 1.5px solid #e5e7eb !important; background: white; font-size: 13px; font-weight: 600; color: #374151; }
-.btn-danger { flex: 1; padding: 11px; border-radius: 9px; background: #ef4444; color: white; font-size: 13px; font-weight: 700; }
-
-/* モーダル */
+.btn-danger { flex: 1; padding: 11px; border-radius: 9px; background: #d7083c; color: white; font-size: 13px; font-weight: 700; }
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: flex-end; z-index: 100; }
 .sheet { background: white; width: 100%; border-radius: 18px 18px 0 0; padding: 22px 18px 38px; }
 .overlay-center { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 0 20px; }
 .dialog { background: white; border-radius: 15px; padding: 22px 18px; width: 100%; max-width: 330px; }
-
-/* フォーム */
 .form-lbl { display: block; font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 5px; }
 .form-sel { padding: 9px 10px; border: 1.5px solid #e5e7eb; border-radius: 10px; font-size: 15px; color: #1a1a1a; background: white; flex: 1; }
 .purpose-btn { padding: 7px 13px; border-radius: 18px; border: 2px solid #e5e7eb; background: white; font-size: 13px; color: #374151; font-weight: 400; }
 .purpose-btn.active { font-weight: 700; }
-
-/* エラー */
 .err-box { background: #fee2e2; border: 1px solid #fca5a5; border-radius: 9px; padding: 9px 12px; margin-bottom: 12px; display: flex; gap: 7px; align-items: flex-start; color: #b91c1c; font-size: 12px; font-weight: 600; }
-
-/* 凡例 */
 .legend { display: flex; gap: 10px; padding: 6px 14px; background: #f8f7f4; }
 .legend-item { display: flex; align-items: center; gap: 4px; font-size: 12px; }
 .legend-dot { width: 9px; height: 9px; border-radius: 2px; }
-
 .hidden { display: none !important; }
 #view-month, #view-week, #view-list { padding-bottom: 80px; }
 </style>
 </head>
 <body>
 
-<!-- ヘッダー -->
 <div id="header">
-  <div style="display:flex;align-items:center;gap:10;margin-bottom:12px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
     <span style="font-size:26px">🚗</span>
-    <div style="flex:1">
-      <h1>Vitz予約</h1>
-    </div>
+    <div style="flex:1"><h1>Vitz予約</h1></div>
     <div style="font-size:10px;opacity:.8;display:flex;align-items:center">
       <span id="conn-dot" class="on"></span><span id="conn-txt">接続中</span>
     </div>
@@ -122,14 +90,12 @@ select { font-family: inherit; }
   <div id="hint" style="display:none"></div>
 </div>
 
-<!-- タブ -->
 <div id="tabs">
   <button class="tab-btn active" onclick="switchView(&#39;month&#39;)">🗓 月</button>
   <button class="tab-btn" onclick="switchView(&#39;week&#39;)">📅 週</button>
   <button class="tab-btn" onclick="switchView(&#39;list&#39;)">📋 一覧</button>
 </div>
 
-<!-- 月表示 -->
 <div id="view-month">
   <div class="nav-row">
     <button class="nav-btn" onclick="prevMonth()">‹</button>
@@ -138,7 +104,7 @@ select { font-family: inherit; }
   </div>
   <div class="legend" id="month-legend"><div class="legend-item"><div class="legend-dot" style="background:#2563eb"></div>👨</div><div class="legend-item"><div class="legend-dot" style="background:#db2777"></div>👩</div></div>
   <div style="display:grid;grid-template-columns:repeat(7,1fr);background:white;border-bottom:1px solid #e5e7eb">
-    <div style="text-align:center;padding:5px 0;font-size:11px;font-weight:700;color:#ef4444">日</div>
+    <div style="text-align:center;padding:5px 0;font-size:11px;font-weight:700;color:#d7083c">日</div>
     <div style="text-align:center;padding:5px 0;font-size:11px;font-weight:700;color:#6b7280">月</div>
     <div style="text-align:center;padding:5px 0;font-size:11px;font-weight:700;color:#6b7280">火</div>
     <div style="text-align:center;padding:5px 0;font-size:11px;font-weight:700;color:#6b7280">水</div>
@@ -146,10 +112,10 @@ select { font-family: inherit; }
     <div style="text-align:center;padding:5px 0;font-size:11px;font-weight:700;color:#6b7280">金</div>
     <div style="text-align:center;padding:5px 0;font-size:11px;font-weight:700;color:#3b82f6">土</div>
   </div>
-  <div id="month-grid"><div class="day-cell other"><div class="day-num"><span style="color:#ef4444;font-weight:400">26</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">27</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">28</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">29</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">30</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">1</span></div></div><div class="day-cell today"><div class="day-num today"><span style="color:white;font-weight:700">2</span></div><div class="res-badge" style="background:#db2777">恭子 10:30〜</div><div class="res-badge" style="background:#2563eb">博 11:45〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#ef4444;font-weight:400">3</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">4</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">5</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">6</span></div><div class="res-badge" style="background:#2563eb">博 6:30〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">7</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">8</span></div><div class="res-badge" style="background:#2563eb">博 11:45〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#3b82f6;font-weight:400">9</span></div><div class="res-badge" style="background:#db2777">恭子 16:00〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#ef4444;font-weight:400">10</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">11</span></div><div class="res-badge" style="background:#2563eb">博 6:30〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">12</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">13</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">14</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">15</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#3b82f6;font-weight:400">16</span></div><div class="res-badge" style="background:#2563eb">博 11:45〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#ef4444;font-weight:400">17</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">18</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">19</span></div><div class="res-badge" style="background:#2563eb">博 6:30〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">20</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">21</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">22</span></div><div class="res-badge" style="background:#2563eb">博 11:45〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#3b82f6;font-weight:400">23</span></div><div class="res-badge" style="background:#db2777">恭子 16:00〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#ef4444;font-weight:400">24</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">25</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">26</span></div><div class="res-badge" style="background:#2563eb">博 6:30〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">27</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">28</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">29</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#3b82f6;font-weight:400">30</span></div><div class="res-badge" style="background:#2563eb">博 11:45〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#ef4444;font-weight:400">31</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">1</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">2</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">3</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">4</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">5</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#3b82f6;font-weight:400">6</span></div></div></div>
+  <div id="month-grid"><div class="day-cell other"><div class="day-num"><span style="color:#d7083c;font-weight:400">26</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">27</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">28</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">29</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">30</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">1</span></div></div><div class="day-cell today"><div class="day-num today"><span style="color:white;font-weight:700">2</span></div><div class="res-badge" style="background:#db2777">恭子 10:30〜</div><div class="res-badge" style="background:#2563eb">博 11:45〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#d7083c;font-weight:400">3</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">4</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">5</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">6</span></div><div class="res-badge" style="background:#2563eb">博 6:30〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">7</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">8</span></div><div class="res-badge" style="background:#2563eb">博 11:45〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#3b82f6;font-weight:400">9</span></div><div class="res-badge" style="background:#db2777">恭子 16:00〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#d7083c;font-weight:400">10</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">11</span></div><div class="res-badge" style="background:#2563eb">博 6:30〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">12</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">13</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">14</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">15</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#3b82f6;font-weight:400">16</span></div><div class="res-badge" style="background:#2563eb">博 11:45〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#d7083c;font-weight:400">17</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">18</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">19</span></div><div class="res-badge" style="background:#2563eb">博 6:30〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">20</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">21</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">22</span></div><div class="res-badge" style="background:#2563eb">博 11:45〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#3b82f6;font-weight:400">23</span></div><div class="res-badge" style="background:#db2777">恭子 16:00〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#d7083c;font-weight:400">24</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">25</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">26</span></div><div class="res-badge" style="background:#2563eb">博 6:30〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">27</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">28</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">29</span></div></div><div class="day-cell"><div class="day-num"><span style="color:#3b82f6;font-weight:400">30</span></div><div class="res-badge" style="background:#2563eb">博 11:45〜</div></div><div class="day-cell"><div class="day-num"><span style="color:#d7083c;font-weight:400">31</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">1</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">2</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">3</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">4</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#1a1a1a;font-weight:400">5</span></div></div><div class="day-cell other"><div class="day-num"><span style="color:#3b82f6;font-weight:400">6</span></div></div></div>
   <div id="detail-panel">
     <div class="detail-head">
-      <span id="detail-title" style="font-size:13px;font-weight:700;color:#16a34a"></span>
+      <span id="detail-title" style="font-size:13px;font-weight:700;color:#fee100"></span>
       <div style="display:flex;gap:8px;align-items:center">
         <button class="btn-green" id="detail-add-btn" onclick="detailAddNew()">＋ 予約</button>
         <button onclick="closeDetail()" style="background:none;border:none;font-size:18px;color:#9ca3af;line-height:1">✕</button>
@@ -159,7 +125,6 @@ select { font-family: inherit; }
   </div>
 </div>
 
-<!-- 週表示 -->
 <div id="view-week" class="hidden">
   <div class="nav-row">
     <button class="nav-btn" onclick="prevWeek()">‹</button>
@@ -170,18 +135,15 @@ select { font-family: inherit; }
   <div id="week-list" style="padding:0 7px"></div>
 </div>
 
-<!-- 一覧 -->
 <div id="view-list" class="hidden">
   <div id="list-content" style="padding:10px 10px"></div>
 </div>
 
-<!-- 予約モーダル -->
 <div class="overlay hidden" id="modal-overlay" onclick="closeModal()">
   <div class="sheet" onclick="event.stopPropagation()">
     <div style="width:34px;height:4px;background:#e5e7eb;border-radius:2px;margin:0 auto 18px"></div>
     <div id="modal-title" style="font-size:15px;font-weight:700;margin-bottom:3px"></div>
     <div id="modal-sub" style="font-size:12px;color:#6b7280;margin-bottom:18px"></div>
-
     <div style="margin-bottom:14px">
       <label class="form-lbl">開始時間</label>
       <div style="display:flex;gap:7px;align-items:center">
@@ -191,7 +153,6 @@ select { font-family: inherit; }
         <span style="font-size:13px;white-space:nowrap">分</span>
       </div>
     </div>
-
     <div style="margin-bottom:14px">
       <label class="form-lbl">終了時間</label>
       <div style="display:flex;gap:7px;align-items:center">
@@ -201,19 +162,15 @@ select { font-family: inherit; }
         <span style="font-size:13px;white-space:nowrap">分</span>
       </div>
     </div>
-
     <div style="margin-bottom:20px">
       <label class="form-lbl">目的</label>
       <div id="purpose-btns" style="display:flex;flex-wrap:wrap;gap:7px"></div>
     </div>
-
     <div id="modal-err" class="err-box hidden"><span style="font-size:17px">🚫</span><span id="modal-err-txt"></span></div>
-
     <button class="btn-primary" id="modal-save-btn" onclick="saveReservation()">予約する</button>
   </div>
 </div>
 
-<!-- 削除確認モーダル -->
 <div class="overlay-center hidden" id="del-overlay">
   <div class="dialog">
     <div style="font-size:30px;text-align:center;margin-bottom:10px">🗑️</div>
@@ -226,7 +183,6 @@ select { font-family: inherit; }
   </div>
 </div>
 
-<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -242,8 +198,8 @@ const app = initializeApp({
 const db = getDatabase(app);
 window._fb = {
   listen: (cb) => onValue(ref(db,"reservations"), snap => { const v=snap.val(); cb(v?Object.values(v):[]); }),
-  save:   (r)  => set(ref(db,`reservations/${r.id}`), r),
-  del:    (id) => remove(ref(db,`reservations/${id}`)),
+  save: (r) => set(ref(db,`reservations/${r.id}`), r),
+  del: (id) => remove(ref(db,`reservations/${id}`)),
 };
 window._fb.listen(data => { window._reservations = data; render(); });
 document.getElementById("conn-dot").classList.add("on");
@@ -251,7 +207,6 @@ document.getElementById("conn-txt").textContent = "接続中";
 </script>
 
 <script>
-// ===== データ =====
 const USERS = [
   {id:"father", name:"博",  emoji:"👨", color:"#2563eb"},
   {id:"mother", name:"恭子", emoji:"👩", color:"#db2777"},
@@ -264,13 +219,12 @@ window._reservations = [];
 let currentUser = null;
 let currentView = "month";
 let baseDate    = new Date();
-let detailDate  = null; // dateStr
-let editId      = null; // 編集中の予約ID
-let modalDate   = null; // モーダルで選択中の日付
+let detailDate  = null;
+let editId      = null;
+let modalDate   = null;
 let deleteTargetId = null;
 let formNote    = "";
 
-// ===== ユーティリティ =====
 function toM(h,m){ return h*60+m; }
 function mH(m){ return Math.floor(m/60); }
 function mM(m){ return m%60; }
@@ -282,17 +236,14 @@ function fjp(d){ return {mo:d.getMonth()+1, da:d.getDate(), dw:["日","月","火
 function getRes(ds){ return window._reservations.filter(r=>r.date===ds); }
 function userOf(id){ return USERS.find(u=>u.id===id); }
 
-// ===== ユーザー選択 =====
 function selectUser(id){
   if(currentUser && currentUser.id===id){ currentUser=null; }
   else { currentUser = USERS.find(u=>u.id===id); }
   document.getElementById("btn-father").className = "user-btn" + (currentUser?.id==="father"?" active":"");
   document.getElementById("btn-mother").className = "user-btn" + (currentUser?.id==="mother"?" active":"");
-  document.getElementById("hint").style.display = currentUser ? "none" : "block";
   render();
 }
 
-// ===== タブ切替 =====
 function switchView(v){
   currentView = v;
   ["month","week","list"].forEach(x=>{
@@ -304,26 +255,19 @@ function switchView(v){
   render();
 }
 
-// ===== レンダリング =====
 function render(){
   if(currentView==="month") renderMonth();
   if(currentView==="week")  renderWeek();
   if(currentView==="list")  renderList();
 }
 
-// ===== 月表示 =====
 function renderMonth(){
   const y=baseDate.getFullYear(), mo=baseDate.getMonth();
   document.getElementById("month-title").textContent = `${y}年 ${mo+1}月`;
   const first=new Date(y,mo,1), off=first.getDay();
   const cells=Array.from({length:42},(_,i)=>new Date(y,mo,1-off+i));
   const td = today();
-
-  // 凡例
-  const leg = document.getElementById("month-legend");
-  leg.innerHTML = USERS.map(u=>`<div class="legend-item"><div class="legend-dot" style="background:${u.color}"></div>${u.emoji}</div>`).join("");
-
-  // グリッド
+  document.getElementById("month-legend").innerHTML = USERS.map(u=>`<div class="legend-item"><div class="legend-dot" style="background:${u.color}"></div>${u.emoji}</div>`).join("");
   const grid = document.getElementById("month-grid");
   grid.innerHTML = "";
   cells.forEach(date=>{
@@ -332,7 +276,7 @@ function renderMonth(){
     const isSel=detailDate===ds;
     const cell=document.createElement("div");
     cell.className="day-cell"+(inM?"":" other")+(isT?" today":"")+(isSel?" selected":"");
-    const numColor=isT?"":dow===0?"#ef4444":dow===6?"#3b82f6":"#1a1a1a";
+    const numColor=isT?"":dow===0?"#d7083c":dow===6?"#3b82f6":"#1a1a1a";
     const badges=dr.sort((a,b)=>norm(a.startHour)-norm(b.startHour)).slice(0,3).map(r=>{
       const u=userOf(r.userId);
       return `<div class="res-badge" style="background:${u?.color}">${u?.name} ${fmt(norm(r.startHour))}〜</div>`;
@@ -356,8 +300,7 @@ function renderDetail(){
   const d=new Date(detailDate+"T00:00:00"), {mo,da,dw}=fjp(d);
   document.getElementById("detail-title").textContent=`${mo}月${da}日（${dw}）`;
   document.getElementById("detail-add-btn").style.display=currentUser?"":"none";
-  const list=document.getElementById("detail-list");
-  list.innerHTML=dr.sort((a,b)=>norm(a.startHour)-norm(b.startHour)).map(r=>resCardHTML(r,false)).join("");
+  document.getElementById("detail-list").innerHTML=dr.sort((a,b)=>norm(a.startHour)-norm(b.startHour)).map(r=>resCardHTML(r,false)).join("");
   panel.classList.add("open");
 }
 
@@ -367,30 +310,28 @@ function detailAddNew(){
 }
 function closeDetail(){ detailDate=null; renderMonth(); }
 
-// ===== 週表示 =====
 function renderWeek(){
   const d=new Date(baseDate), diff=d.getDate()-d.getDay();
   const days=Array.from({length:7},(_,i)=>{const x=new Date(d);x.setDate(diff+i);return x;});
   document.getElementById("week-title").textContent=`${days[0].getMonth()+1}/${days[0].getDate()} 〜 ${days[6].getMonth()+1}/${days[6].getDate()}`;
   document.getElementById("week-legend").innerHTML=USERS.map(u=>`<div class="legend-item"><div class="legend-dot" style="background:${u.color}"></div>${u.emoji} ${u.name}</div>`).join("");
   const td=today();
-  const list=document.getElementById("week-list");
-  list.innerHTML=days.map(date=>{
+  document.getElementById("week-list").innerHTML=days.map(date=>{
     const ds=fdate(date), dr=getRes(ds), isT=ds===td;
     const {mo,da,dw}=fjp(date), isSun=date.getDay()===0, isSat=date.getDay()===6;
     const headCls=isT?"today":isSun?"sun":isSat?"sat":"";
     const cards=dr.sort((a,b)=>norm(a.startHour)-norm(b.startHour)).map(r=>resCardHTML(r,false)).join("");
-    const addBtn=currentUser?`<button class="btn-add" style="background:${currentUser.color}" onclick="openModalByDateStr('${ds}',9)">＋ 予約</button>`:"";
-    const numColor=isT?"white":isSun?"#ef4444":isSat?"#3b82f6":"#1a1a1a";
+    const addBtn=currentUser?`<button class="btn-add" style="background:#009261" onclick="openModalByDateStr('${ds}',9)">＋ 予約</button>`:"";
+    const numColor=isT?"white":isSun?"#d7083c":isSat?"#3b82f6":"#1a1a1a";
     return `<div class="week-card${isT?" today":""}">
       <div class="week-head ${headCls}" style="display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-bottom:1px solid #f0f0f0">
         <div style="display:flex;align-items:center;gap:7px">
-          <div style="width:34px;height:34px;border-radius:50%;background:${isT?"#16a34a":"transparent"};display:flex;align-items:center;justify-content:center;flex-direction:column">
+          <div style="width:34px;height:34px;border-radius:50%;background:${isT?"#fee100":"transparent"};display:flex;align-items:center;justify-content:center;flex-direction:column">
             <span style="font-size:15px;font-weight:700;color:${numColor};line-height:1">${da}</span>
-            <span style="font-size:9px;color:${isT?"rgba(255,255,255,0.8)":isSun?"#ef4444":isSat?"#3b82f6":"#9ca3af"}">${dw}</span>
+            <span style="font-size:9px;color:${isT?"rgba(255,255,255,0.8)":isSun?"#d7083c":isSat?"#3b82f6":"#9ca3af"}">${dw}</span>
           </div>
           <span style="font-size:11px;color:#9ca3af">${mo}月</span>
-          ${isT?'<span style="font-size:9px;background:#16a34a;color:white;border-radius:5px;padding:1px 5px">今日</span>':""}
+          ${isT?'<span style="font-size:9px;background:#fee100;color:white;border-radius:5px;padding:1px 5px">今日</span>':""}
         </div>
         ${addBtn}
       </div>
@@ -401,7 +342,6 @@ function renderWeek(){
   }).join("");
 }
 
-// ===== 一覧 =====
 function renderList(){
   const td=today();
   const list=[...window._reservations].filter(r=>r.date>=td).sort((a,b)=>a.date.localeCompare(b.date)||norm(a.startHour)-norm(b.startHour));
@@ -410,23 +350,14 @@ function renderList(){
   el.innerHTML=list.map(r=>resCardHTML(r,true)).join("");
 }
 
-// ===== 予約カードHTML =====
 function resCardHTML(res, showDate){
   const u=userOf(res.userId), mine=currentUser?.id===res.userId;
   const {mo,da,dw}=fjp(new Date(res.date+"T00:00:00"));
   const dateCol=showDate?`<div style="text-align:center;min-width:34px"><div style="font-size:10px;color:#9ca3af">${mo}月</div><div style="font-size:17px;font-weight:700;color:${u?.color};line-height:1">${da}</div><div style="font-size:10px;color:#9ca3af">${dw}</div></div>`:`<span style="font-size:17px">${u?.emoji}</span>`;
   const btns=mine?`<div style="display:flex;gap:5px;flex-shrink:0"><button class="btn-edit" onclick="openEditModal('${res.id}')">編集</button><button class="btn-del" onclick="openDelModal('${res.id}')">削除</button></div>`:"";
-  return `<div class="res-card" style="background:${u?.color}12;border-color:${u?.color}33;border-left:4px solid ${u?.color}">
-    ${dateCol}
-    <div style="flex:1;min-width:0">
-      <div style="font-size:13px;font-weight:700;color:${u?.color}">${fmt(norm(res.startHour))}〜${fmt(norm(res.endHour))}</div>
-      <div style="font-size:11px;color:#6b7280">${u?.name}${res.note?`・${res.note}`:""}</div>
-    </div>
-    ${btns}
-  </div>`;
+  return `<div class="res-card" style="background:${u?.color}12;border-color:${u?.color}33;border-left:4px solid ${u?.color}">${dateCol}<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:${u?.color}">${fmt(norm(res.startHour))}〜${fmt(norm(res.endHour))}</div><div style="font-size:11px;color:#6b7280">${u?.name}${res.note?`・${res.note}`:""}</div></div>${btns}</div>`;
 }
 
-// ===== モーダル =====
 function initSelects(){
   const sh=document.getElementById("s-hour"), sm=document.getElementById("s-min");
   const eh=document.getElementById("e-hour"), em=document.getElementById("e-min");
@@ -437,37 +368,40 @@ function initSelects(){
 }
 
 function setModalTime(sM, eM){
-  document.getElementById("s-hour").value = mH(sM);
-  document.getElementById("s-min").value  = mM(sM);
-  document.getElementById("e-hour").value = mH(eM);
-  document.getElementById("e-min").value  = mM(eM);
+  document.getElementById("s-hour").value=mH(sM);
+  document.getElementById("s-min").value=mM(sM);
+  document.getElementById("e-hour").value=mH(eM);
+  document.getElementById("e-min").value=mM(eM);
 }
 
 function getModalTime(){
-  const sM=toM(+document.getElementById("s-hour").value, +document.getElementById("s-min").value);
-  const eM=toM(+document.getElementById("e-hour").value, +document.getElementById("e-min").value);
-  return {sM, eM};
+  return {
+    sM: toM(+document.getElementById("s-hour").value, +document.getElementById("s-min").value),
+    eM: toM(+document.getElementById("e-hour").value, +document.getElementById("e-min").value)
+  };
 }
 
 function onStartHourChange(){
-  const h=+document.getElementById("s-hour").value, m=+document.getElementById("s-min").value;
-  const s=toM(h,m);
+  const s=toM(+document.getElementById("s-hour").value, +document.getElementById("s-min").value);
   document.getElementById("e-hour").value=mH(s+60);
   document.getElementById("e-min").value=mM(s+60);
 }
 function onStartMinChange(){
-  const h=+document.getElementById("s-hour").value, m=+document.getElementById("s-min").value;
-  const s=toM(h,m);
+  const s=toM(+document.getElementById("s-hour").value, +document.getElementById("s-min").value);
   document.getElementById("e-hour").value=mH(s+60);
   document.getElementById("e-min").value=mM(s+60);
 }
 
 function renderPurposeBtns(editUser){
-  const color=editUser?.color||"#16a34a";
+  const color=editUser?.color||"#fee100";
   document.getElementById("purpose-btns").innerHTML=PURPOSES.map(p=>`<button class="purpose-btn${formNote===p?" active":""}" style="${formNote===p?`border-color:${color};background:${color}18;color:${color}`:""}" onclick="selectPurpose('${p}')">${p}</button>`).join("");
 }
 
-function selectPurpose(p){ formNote=p; const eu=editId?userOf(window._reservations.find(r=>r.id===editId)?.userId):currentUser; renderPurposeBtns(eu); }
+function selectPurpose(p){
+  formNote=p;
+  const eu=editId?userOf(window._reservations.find(r=>r.id===editId)?.userId):currentUser;
+  renderPurposeBtns(eu);
+}
 
 function openModal(date, hour){
   if(!currentUser) return;
@@ -526,7 +460,6 @@ function showErr(msg){
   document.getElementById("modal-err").classList.remove("hidden");
 }
 
-// ===== 削除 =====
 function openDelModal(id){
   deleteTargetId=id;
   const res=window._reservations.find(r=>r.id===id), u=userOf(res?.userId);
@@ -540,13 +473,11 @@ async function confirmDelete(){
   closeDelModal();
 }
 
-// ===== ナビ =====
 function prevMonth(){ baseDate=new Date(baseDate.getFullYear(), baseDate.getMonth()-1, 1); detailDate=null; renderMonth(); }
 function nextMonth(){ baseDate=new Date(baseDate.getFullYear(), baseDate.getMonth()+1, 1); detailDate=null; renderMonth(); }
 function prevWeek(){ baseDate=new Date(baseDate); baseDate.setDate(baseDate.getDate()-7); renderWeek(); }
 function nextWeek(){ baseDate=new Date(baseDate); baseDate.setDate(baseDate.getDate()+7); renderWeek(); }
 
-// ===== 初期描画 =====
 render();
 </script>
 
