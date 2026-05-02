@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0043)file:///Users/takuro/Downloads/vitz_22.html -->
+<!-- saved from url=(0043)file:///Users/takuro/Downloads/vitz_25.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -94,13 +94,13 @@ select { font-family: inherit; }
 </div>
 
 <div id="view-month">
-  <div style="display:flex;align-items:center;padding:10px 14px;background:white;border-bottom:1px solid #e5e7eb">
-    <div style="flex:1;display:flex;justify-content:flex-start">
+  <div style="display:flex;align-items:center;padding:10px 14px;background:white;border-bottom:1px solid #e5e7eb;position:relative">
+    <div style="position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px">
       <button class="nav-btn" onclick="prevMonth()">‹</button>
-    </div>
-    <span id="month-title" style="font-size:14px;font-weight:400">2026年 5月</span>
-    <div style="flex:1;display:flex;justify-content:flex-end;align-items:center;gap:6px">
+      <span id="month-title" style="font-size:14px;font-weight:400;white-space:nowrap">2026年 5月</span>
       <button class="nav-btn" onclick="nextMonth()">›</button>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center">
       <button onclick="goToday(&#39;month&#39;)" style="background:#009261;color:white;border:none;border-radius:7px;padding:4px 8px;font-size:11px;font-weight:600;white-space:nowrap">今日</button>
     </div>
   </div>
@@ -128,13 +128,13 @@ select { font-family: inherit; }
 </div>
 
 <div id="view-week" class="hidden">
-  <div style="display:flex;align-items:center;padding:10px 14px;background:white;border-bottom:1px solid #e5e7eb">
-    <div style="flex:1;display:flex;justify-content:flex-start">
+  <div style="display:flex;align-items:center;padding:10px 14px;background:white;border-bottom:1px solid #e5e7eb;position:relative">
+    <div style="position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px">
       <button class="nav-btn" onclick="prevWeek()">‹</button>
-    </div>
-    <span id="week-title" style="font-size:14px;font-weight:400"></span>
-    <div style="flex:1;display:flex;justify-content:flex-end;align-items:center;gap:6px">
+      <span id="week-title" style="font-size:14px;font-weight:400;white-space:nowrap"></span>
       <button class="nav-btn" onclick="nextWeek()">›</button>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center">
       <button onclick="goToday(&#39;week&#39;)" style="background:#009261;color:white;border:none;border-radius:7px;padding:4px 8px;font-size:11px;font-weight:600;white-space:nowrap">今日</button>
     </div>
   </div>
