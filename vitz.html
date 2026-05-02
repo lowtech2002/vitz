@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Vitz予約</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; background: #f8f7f4; color: #1a1a1a; min-height: 100vh; }
+    button, select, input { font-family: inherit; }
+    .spinner { width: 36px; height: 36px; border: 3px solid #e5e7eb; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div id="root"><div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:12px;color:#6b7280;font-family:sans-serif"><div class="spinner"></div>読み込み中...</div></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC3xJ9l9QU1o8_6iltidsmeuff5BH0Ecdo",
+      authDomain: "vitz-95d10.firebaseapp.com",
+      databaseURL: "https://vitz-95d10-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "vitz-95d10",
+      storageBucket: "vitz-95d10.firebasestorage.app",
+      messagingSenderId: "1097192284259",
+      appId: "1:1097192284259:web:684d0aff5d7aafbcc3d856"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window._firebase = {
+      listenReservations: (callback) => {
+        const r = ref(db, "reservations");
+        onValue(r, snap => {
+          const val = snap.val();
+          callback(val ? Object.values(val) : []);
+        });
+      },
+      saveReservation: (res) => set(ref(db, `reservations/${res.id}`), res),
+      deleteReservation: (id) => remove(ref(db, `reservations/${id}`)),
+    };
+
+    window._firebaseReady = true;
+    window.dispatchEvent(new Event("firebaseReady"));
+  </script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const USERS = [
+      { id: "father", name: "博", emoji: "👨", color: "#2563eb" },
+      { id: "mother", name: "恭子", emoji: "👩", color: "#db2777" },
+    ];
+
+    const HOURS_LIST = Array.from({ length: 18 }, (_, i) => i + 6);
+    const MINS_LIST = [0, 15, 30, 45];
+
+    function toMins(h, m) { return h * 60 + m; }
+    function minsToH(mins) { return Math.floor(mins / 60); }
+    function minsToM(mins) { return mins % 60; }
+    function fmtMins(mins) { return `${minsToH(mins)}:${String(minsToM(mins)).padStart(2, "0")}`; }
+    function normalizeMins(v) { return v < 100 ? Math.round(v * 60) : v; }
+    function formatDate(date) {
+      return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+    }
+    function formatJP(date) {
+      return { month: date.getMonth()+1, day: date.getDate(), dow: ["日","月","火","水","木","金","土"][date.getDay()] };
+    }
+    function getWeekDates(base) {
+      const d = new Date(base), diff = d.getDate() - d.getDay();
+      return Array.from({length:7}, (_,i) => { const dd = new Date(d); dd.setDate(diff+i); return dd; });
+    }
+    function getMonthGrid(base) {
+      const year = base.getFullYear(), month = base.getMonth();
+      const first = new Date(year, month, 1), offset = first.getDay();
+      return { cells: Array.from({length:42}, (_,i) => new Date(year, month, 1-offset+i)), year, month };
+    }
+
+    const navBtn = { background:"#f3f4f6", border:"none", borderRadius:8, width:36, height:36, fontSize:20, cursor:"pointer", color:"#374151", display:"inline-flex", alignItems:"center", justifyContent:"center" };
+    const lbl = { display:"block", fontSize:12, fontWeight:600, color:"#6b7280", marginBottom:6 };
+    const sel = { padding:"10px 12px", border:"1.5px solid #e5e7eb", borderRadius:10, fontSize:15, color:"#1a1a1a", background:"white", flex:1 };
+
+    function App() {
+      const [reservations, setReservations] = useState([]);
+      const [currentUser, setCurrentUser] = useState(null);
+      const [baseDate, setBaseDate] = useState(new Date());
+      const [modal, setModal] = useState(null);
+      const [form, setForm] = useState({ startMins:540, endMins:600, note:"" });
+      const [conflictError, setConflictError] = useState("");
+      const [deleteConfirm, setDeleteConfirm] = useState(null);
+      const [view, setView] = useState("month");
+      const [syncing, setSyncing] = useState(false);
+      const [connected, setConnected] = useState(false);
+
+      useEffect(() => {
+        const init = () => {
+          if (!window._firebase) return;
+          setConnected(true);
+          window._firebase.listenReservations(data => setReservations(data));
+        };
+        if (window._firebaseReady) init();
+        else window.addEventListener("firebaseReady", init, { once: true });
+      }, []);
+
+      const getRes = (dateStr) => reservations.filter(r => r.date === dateStr);
+
+      const openModal = (date, hour) => {
+        if (!currentUser) return;
+        const s = toMins(hour, 0);
+        setForm({ startMins:s, endMins:s+60, note:"" });
+        setConflictError("");
+        setModal({ date, hour });
+      };
+
+      const addReservation = async () => {
+        if (form.startMins >= form.endMins) { setConflictError("終了時間は開始時間より後にしてください"); return; }
+        const dateStr = formatDate(modal.date);
+        const conflict = reservations.find(r => {
+          const rs = normalizeMins(r.startHour), re = normalizeMins(r.endHour);
+          return r.date === dateStr && form.startMins < re && form.endMins > rs;
+        });
+        if (conflict) {
+          const other = USERS.find(u => u.id === conflict.userId);
+          setConflictError(`${other.name}の予約（${fmtMins(normalizeMins(conflict.startHour))}〜${fmtMins(normalizeMins(conflict.endHour))}）と重なるため予約できません`);
+          return;
+        }
+        setSyncing(true);
+        await window._firebase.saveReservation({ id:Date.now().toString(), userId:currentUser.id, date:dateStr, startHour:form.startMins, endHour:form.endMins, note:form.note });
+        setSyncing(false);
+        setConflictError("");
+        setModal(null);
+      };
+
+      const confirmDelete = async () => {
+        if (!deleteConfirm) return;
+        setSyncing(true);
+        await window._firebase.deleteReservation(deleteConfirm);
+        setSyncing(false);
+        setDeleteConfirm(null);
+      };
+
+      const prevWeek = () => { const d=new Date(baseDate); d.setDate(d.getDate()-7); setBaseDate(d); };
+      const nextWeek = () => { const d=new Date(baseDate); d.setDate(d.getDate()+7); setBaseDate(d); };
+      const prevMonth = () => { const d=new Date(baseDate); d.setDate(1); d.setMonth(d.getMonth()-1); setBaseDate(d); };
+      const nextMonth = () => { const d=new Date(baseDate); d.setDate(1); d.setMonth(d.getMonth()+1); setBaseDate(d); };
+
+      const todayStr = formatDate(new Date());
+      const weekDates = getWeekDates(baseDate);
+      const upcoming = [...reservations].filter(r => r.date >= todayStr)
+        .sort((a,b) => a.date.localeCompare(b.date) || normalizeMins(a.startHour)-normalizeMins(b.startHour));
+
+      return (
+        <div style={{minHeight:"100vh",background:"#f8f7f4"}}>
+
+          {/* Header */}
+          <div style={{background:"linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%)",color:"white",padding:"20px 16px 16px",boxShadow:"0 2px 12px rgba(37,99,235,0.3)"}}>
+            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
+              <span style={{fontSize:28}}>🚗</span>
+              <div style={{flex:1}}>
+                <div style={{fontSize:18,fontWeight:700,letterSpacing:1}}>Vitz予約</div>
+                <div style={{fontSize:11,opacity:0.8}}>Family Car Schedule</div>
+              </div>
+              <div style={{fontSize:10,opacity:0.8,display:"flex",alignItems:"center",gap:4}}>
+                <div style={{width:7,height:7,borderRadius:"50%",background:connected?"#4ade80":"#f87171"}}/>
+                {connected?"接続中":"接続待ち"}
+              </div>
+            </div>
+            <div style={{display:"flex",gap:8}}>
+              {USERS.map(u => (
+                <button key={u.id} onClick={() => setCurrentUser(currentUser?.id===u.id ? null : u)} style={{flex:1,padding:"10px 8px",borderRadius:12,border:currentUser?.id===u.id?"2.5px solid white":"2px solid rgba(255,255,255,0.3)",background:currentUser?.id===u.id?"rgba(255,255,255,0.25)":"rgba(255,255,255,0.1)",color:"white",cursor:"pointer",fontSize:13,fontWeight:600,display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
+                  <span style={{fontSize:20}}>{u.emoji}</span>{u.name}
+                  {currentUser?.id===u.id && <span style={{fontSize:10,background:"white",color:"#2563eb",borderRadius:6,padding:"1px 6px"}}>操作中</span>}
+                </button>
+              ))}
+            </div>
+            {!currentUser && <div style={{marginTop:8,fontSize:11,opacity:0.7,textAlign:"center"}}>予約するには上で名前を選んでください</div>}
+          </div>
+
+          {/* Tabs */}
+          <div style={{display:"flex",background:"white",borderBottom:"1px solid #e5e7eb"}}>
+            {[["month","🗓 月表示"],["week","📅 週表示"],["list","📋 一覧"]].map(([v,label]) => (
+              <button key={v} onClick={() => setView(v)} style={{flex:1,padding:"12px 0",border:"none",background:"none",cursor:"pointer",fontSize:12,fontWeight:600,color:view===v?"#2563eb":"#9ca3af",borderBottom:view===v?"2.5px solid #2563eb":"2.5px solid transparent"}}>{label}</button>
+            ))}
+          </div>
+
+          {/* 月表示 */}
+          {view==="month" && (() => {
+            const {cells,year,month} = getMonthGrid(baseDate);
+            return (
+              <div style={{paddingBottom:80}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 16px",background:"white",borderBottom:"1px solid #e5e7eb"}}>
+                  <button onClick={prevMonth} style={navBtn}>‹</button>
+                  <span style={{fontSize:15,fontWeight:700}}>{year}年 {month+1}月</span>
+                  <button onClick={nextMonth} style={navBtn}>›</button>
+                </div>
+                <div style={{display:"flex",gap:12,padding:"8px 16px",background:"#f8f7f4"}}>
+                  {USERS.map(u => <div key={u.id} style={{display:"flex",alignItems:"center",gap:4,fontSize:12}}><div style={{width:10,height:10,borderRadius:3,background:u.color}}/>{u.emoji}</div>)}
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",background:"white",borderBottom:"1px solid #e5e7eb"}}>
+                  {["日","月","火","水","木","金","土"].map((d,i) => <div key={d} style={{textAlign:"center",padding:"6px 0",fontSize:11,fontWeight:700,color:i===0?"#ef4444":i===6?"#3b82f6":"#6b7280"}}>{d}</div>)}
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:1,background:"#e5e7eb"}}>
+                  {cells.map((date,idx) => {
+                    const dateStr=formatDate(date), inMonth=date.getMonth()===month;
+                    const isToday=dateStr===todayStr, dayRes=getRes(dateStr);
+                    const dow=date.getDay(), isSat=dow===6, isSun=dow===0;
+                    return (
+                      <div key={idx} onClick={() => inMonth && openModal(date,9)} style={{background:isToday?"#eff6ff":"white",minHeight:64,padding:"4px",cursor:inMonth&&currentUser?"pointer":"default",opacity:inMonth?1:0.35}}>
+                        <div style={{width:24,height:24,borderRadius:"50%",background:isToday?"#2563eb":"transparent",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:3}}>
+                          <span style={{fontSize:12,fontWeight:isToday?700:500,color:isToday?"white":isSun?"#ef4444":isSat?"#3b82f6":"#1a1a1a"}}>{date.getDate()}</span>
+                        </div>
+                        <div style={{display:"flex",flexDirection:"column",gap:2}}>
+                          {dayRes.sort((a,b)=>normalizeMins(a.startHour)-normalizeMins(b.startHour)).slice(0,3).map(res => {
+                            const u=USERS.find(u=>u.id===res.userId);
+                            return <div key={res.id} style={{background:u?.color,color:"white",borderRadius:3,fontSize:9,fontWeight:600,padding:"1px 4px",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{u?.name} {fmtMins(normalizeMins(res.startHour))}〜</div>;
+                          })}
+                          {dayRes.length>3 && <div style={{fontSize:9,color:"#9ca3af",paddingLeft:2}}>+{dayRes.length-3}件</div>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* 週表示 */}
+          {view==="week" && (
+            <div>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 16px",background:"white",borderBottom:"1px solid #e5e7eb"}}>
+                <button onClick={prevWeek} style={navBtn}>‹</button>
+                <span style={{fontSize:14,fontWeight:600}}>{weekDates[0].getMonth()+1}/{weekDates[0].getDate()} 〜 {weekDates[6].getMonth()+1}/{weekDates[6].getDate()}</span>
+                <button onClick={nextWeek} style={navBtn}>›</button>
+              </div>
+              <div style={{display:"flex",gap:12,padding:"8px 16px",background:"#f8f7f4"}}>
+                {USERS.map(u => <div key={u.id} style={{display:"flex",alignItems:"center",gap:4,fontSize:12}}><div style={{width:12,height:12,borderRadius:3,background:u.color}}/>{u.emoji} {u.name}</div>)}
+              </div>
+              <div style={{padding:"0 8px 80px"}}>
+                {weekDates.map(date => {
+                  const dateStr=formatDate(date), {month,day,dow}=formatJP(date);
+                  const dayRes=getRes(dateStr), isToday=dateStr===todayStr;
+                  const isSun=date.getDay()===0, isSat=date.getDay()===6;
+                  return (
+                    <div key={dateStr} style={{marginTop:8,background:"white",borderRadius:12,overflow:"hidden",boxShadow:isToday?"0 0 0 2px #2563eb":"0 1px 4px rgba(0,0,0,0.07)"}}>
+                      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 14px",background:isToday?"#eff6ff":isSun?"#fff5f5":isSat?"#f0f9ff":"#fafafa",borderBottom:"1px solid #f0f0f0"}}>
+                        <div style={{display:"flex",alignItems:"center",gap:8}}>
+                          <div style={{width:36,height:36,borderRadius:"50%",background:isToday?"#2563eb":"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column"}}>
+                            <span style={{fontSize:16,fontWeight:700,color:isToday?"white":isSun?"#ef4444":isSat?"#3b82f6":"#1a1a1a",lineHeight:1}}>{day}</span>
+                            <span style={{fontSize:9,color:isToday?"rgba(255,255,255,0.8)":isSun?"#ef4444":isSat?"#3b82f6":"#9ca3af"}}>{dow}</span>
+                          </div>
+                          <span style={{fontSize:11,color:"#9ca3af"}}>{month}月</span>
+                          {isToday && <span style={{fontSize:10,background:"#2563eb",color:"white",borderRadius:6,padding:"1px 6px"}}>今日</span>}
+                        </div>
+                        {currentUser && <button onClick={() => openModal(date,9)} style={{fontSize:11,background:currentUser.color,color:"white",border:"none",borderRadius:8,padding:"5px 10px",cursor:"pointer",fontWeight:600}}>＋ 予約</button>}
+                      </div>
+                      <div style={{padding:"8px 14px 10px"}}>
+                        {dayRes.length===0
+                          ? <div style={{fontSize:12,color:"#d1d5db",textAlign:"center",padding:"4px 0"}}>予約なし</div>
+                          : <div style={{display:"flex",flexDirection:"column",gap:6}}>
+                              {dayRes.sort((a,b)=>normalizeMins(a.startHour)-normalizeMins(b.startHour)).map(res => {
+                                const user=USERS.find(u=>u.id===res.userId), canDelete=currentUser?.id===res.userId;
+                                return (
+                                  <div key={res.id} style={{display:"flex",alignItems:"center",gap:8,background:`${user?.color}14`,border:`1px solid ${user?.color}44`,borderLeft:`4px solid ${user?.color}`,borderRadius:8,padding:"7px 10px"}}>
+                                    <span style={{fontSize:18}}>{user?.emoji}</span>
+                                    <div style={{flex:1}}>
+                                      <div style={{fontSize:13,fontWeight:700,color:user?.color}}>{fmtMins(normalizeMins(res.startHour))} 〜 {fmtMins(normalizeMins(res.endHour))}</div>
+                                      <div style={{fontSize:11,color:"#6b7280"}}>{user?.name}{res.note&&`・${res.note}`}</div>
+                                    </div>
+                                    {canDelete && <button onClick={() => setDeleteConfirm(res.id)} style={{background:"none",border:"none",cursor:"pointer",fontSize:16,color:"#d1d5db",padding:2}}>✕</button>}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                        }
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* 一覧 */}
+          {view==="list" && (
+            <div style={{padding:"12px 12px 80px"}}>
+              {upcoming.length===0
+                ? <div style={{textAlign:"center",padding:"60px 20px",color:"#9ca3af"}}><div style={{fontSize:48,marginBottom:12}}>🚗</div><div style={{fontSize:15}}>今後の予約はありません</div></div>
+                : <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                    {upcoming.map(res => {
+                      const user=USERS.find(u=>u.id===res.userId);
+                      const d=new Date(res.date+"T00:00:00"), {month,day,dow}=formatJP(d);
+                      const canDelete=currentUser?.id===res.userId;
+                      return (
+                        <div key={res.id} style={{background:"white",borderRadius:12,padding:"12px 14px",display:"flex",alignItems:"center",gap:12,borderLeft:`5px solid ${user?.color}`,boxShadow:"0 1px 4px rgba(0,0,0,0.07)"}}>
+                          <div style={{textAlign:"center",minWidth:44}}>
+                            <div style={{fontSize:11,color:"#9ca3af"}}>{month}月</div>
+                            <div style={{fontSize:22,fontWeight:700,lineHeight:1}}>{day}</div>
+                            <div style={{fontSize:11,color:"#9ca3af"}}>{dow}</div>
+                          </div>
+                          <div style={{flex:1}}>
+                            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
+                              <span style={{fontSize:18}}>{user?.emoji}</span>
+                              <span style={{fontSize:14,fontWeight:700,color:user?.color}}>{user?.name}</span>
+                            </div>
+                            <div style={{fontSize:13,color:"#374151"}}>{fmtMins(normalizeMins(res.startHour))} 〜 {fmtMins(normalizeMins(res.endHour))}</div>
+                            {res.note && <div style={{fontSize:12,color:"#6b7280",marginTop:2}}>{res.note}</div>}
+                          </div>
+                          {canDelete && <button onClick={() => setDeleteConfirm(res.id)} style={{background:"#fee2e2",border:"none",cursor:"pointer",fontSize:12,color:"#ef4444",borderRadius:8,padding:"6px 10px",fontWeight:600}}>削除</button>}
+                        </div>
+                      );
+                    })}
+                  </div>
+              }
+            </div>
+          )}
+
+          {/* 予約モーダル */}
+          {modal && (
+            <div onClick={() => setModal(null)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"flex-end",zIndex:100}}>
+              <div onClick={e => e.stopPropagation()} style={{background:"white",width:"100%",borderRadius:"20px 20px 0 0",padding:"24px 20px 40px"}}>
+                <div style={{width:36,height:4,background:"#e5e7eb",borderRadius:2,margin:"0 auto 20px"}}/>
+                <div style={{fontSize:16,fontWeight:700,marginBottom:4}}>🚗 予約を追加</div>
+                <div style={{fontSize:13,color:"#6b7280",marginBottom:20}}>
+                  {(() => { const {month,day,dow}=formatJP(modal.date); return `${month}月${day}日（${dow}）`; })()}
+                  ・{currentUser?.emoji} {currentUser?.name}
+                </div>
+                <div style={{marginBottom:16}}>
+                  <label style={lbl}>開始時間</label>
+                  <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                    <select value={minsToH(form.startMins)} onChange={e => { const h=Number(e.target.value),s=toMins(h,minsToM(form.startMins)); setForm({...form,startMins:s,endMins:s+60}); setConflictError(""); }} style={sel}>
+                      {HOURS_LIST.map(h => <option key={h} value={h}>{h}</option>)}
+                    </select>
+                    <span style={{fontSize:14,color:"#374151",whiteSpace:"nowrap"}}>時</span>
+                    <select value={minsToM(form.startMins)} onChange={e => { const m=Number(e.target.value),s=toMins(minsToH(form.startMins),m); setForm({...form,startMins:s,endMins:s+60}); setConflictError(""); }} style={sel}>
+                      {MINS_LIST.map(m => <option key={m} value={m}>{String(m).padStart(2,"0")}</option>)}
+                    </select>
+                    <span style={{fontSize:14,color:"#374151",whiteSpace:"nowrap"}}>分</span>
+                  </div>
+                </div>
+                <div style={{marginBottom:16}}>
+                  <label style={lbl}>終了時間</label>
+                  <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                    <select value={minsToH(form.endMins)} onChange={e => { setForm({...form,endMins:toMins(Number(e.target.value),minsToM(form.endMins))}); setConflictError(""); }} style={sel}>
+                      {HOURS_LIST.map(h => <option key={h} value={h}>{h}</option>)}
+                    </select>
+                    <span style={{fontSize:14,color:"#374151",whiteSpace:"nowrap"}}>時</span>
+                    <select value={minsToM(form.endMins)} onChange={e => { setForm({...form,endMins:toMins(minsToH(form.endMins),Number(e.target.value))}); setConflictError(""); }} style={sel}>
+                      {MINS_LIST.map(m => <option key={m} value={m}>{String(m).padStart(2,"0")}</option>)}
+                    </select>
+                    <span style={{fontSize:14,color:"#374151",whiteSpace:"nowrap"}}>分</span>
+                  </div>
+                </div>
+                <div style={{marginBottom:24}}>
+                  <label style={lbl}>目的</label>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+                    {["仕事","買い物","病院","オケ","その他"].map(opt => (
+                      <label key={opt} style={{display:"flex",alignItems:"center",padding:"8px 14px",borderRadius:20,cursor:"pointer",border:`2px solid ${form.note===opt?currentUser?.color:"#e5e7eb"}`,background:form.note===opt?`${currentUser?.color}15`:"white",fontSize:14,fontWeight:form.note===opt?700:400,color:form.note===opt?currentUser?.color:"#374151"}}>
+                        <input type="radio" name="purpose" value={opt} checked={form.note===opt} onChange={() => setForm({...form,note:opt})} style={{display:"none"}}/>
+                        {opt}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                {conflictError && (
+                  <div style={{background:"#fee2e2",border:"1px solid #fca5a5",borderRadius:10,padding:"10px 14px",marginBottom:14,display:"flex",alignItems:"flex-start",gap:8}}>
+                    <span style={{fontSize:18,lineHeight:1.2}}>🚫</span>
+                    <span style={{fontSize:13,color:"#b91c1c",fontWeight:600,lineHeight:1.4}}>{conflictError}</span>
+                  </div>
+                )}
+                <button onClick={addReservation} style={{width:"100%",padding:"14px",borderRadius:12,border:"none",background:currentUser?.color,color:"white",fontSize:15,fontWeight:700,cursor:"pointer"}}>
+                  {syncing ? "保存中..." : "予約する"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* 削除確認モーダル */}
+          {deleteConfirm && (() => {
+            const res=reservations.find(r=>r.id===deleteConfirm);
+            const user=USERS.find(u=>u.id===res?.userId);
+            return (
+              <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200,padding:"0 24px"}}>
+                <div style={{background:"white",borderRadius:16,padding:"24px 20px",width:"100%",maxWidth:340}}>
+                  <div style={{fontSize:32,textAlign:"center",marginBottom:12}}>🗑️</div>
+                  <div style={{fontSize:15,fontWeight:700,textAlign:"center",marginBottom:8}}>予約を削除しますか？</div>
+                  {res && (
+                    <div style={{background:"#f8f7f4",borderRadius:10,padding:"10px 14px",marginBottom:20,textAlign:"center"}}>
+                      <div style={{fontSize:13,fontWeight:700,color:user?.color}}>{user?.emoji} {user?.name}</div>
+                      <div style={{fontSize:13,color:"#374151"}}>{res.date}　{fmtMins(normalizeMins(res.startHour))}〜{fmtMins(normalizeMins(res.endHour))}</div>
+                      {res.note && <div style={{fontSize:12,color:"#6b7280"}}>{res.note}</div>}
+                    </div>
+                  )}
+                  <div style={{display:"flex",gap:10}}>
+                    <button onClick={() => setDeleteConfirm(null)} style={{flex:1,padding:"12px",borderRadius:10,border:"1.5px solid #e5e7eb",background:"white",fontSize:14,fontWeight:600,cursor:"pointer",color:"#374151"}}>キャンセル</button>
+                    <button onClick={confirmDelete} style={{flex:1,padding:"12px",borderRadius:10,border:"none",background:"#ef4444",color:"white",fontSize:14,fontWeight:700,cursor:"pointer"}}>
+                      {syncing ? "削除中..." : "削除する"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
+</body>
+</html>
