@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- saved from url=(0043)file:///Users/takuro/Downloads/vitz_20.html -->
+<!-- saved from url=(0043)file:///Users/takuro/Downloads/vitz_21.html -->
 <html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Vitz予約</title>
-<link rel="apple-touch-icon" href="vitz.png">
-<link rel="icon" type="image/png" href="vitz.png">
-<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="file:///Users/takuro/Downloads/vitz.png">
+<link rel="icon" type="image/png" href="file:///Users/takuro/Downloads/vitz.png">
+<link rel="manifest" href="file:///Users/takuro/Downloads/manifest.json">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; background: #fefce8; color: #1a1a1a; font-size: 14px; }
@@ -95,11 +95,12 @@ select { font-family: inherit; }
 
 <div id="view-month">
   <div class="nav-row">
-    <div style="width:60px;display:flex;justify-content:flex-start">
+    <div style="width:80px;display:flex;justify-content:flex-start;align-items:center;gap:6px">
       <button class="nav-btn" onclick="prevMonth()">‹</button>
+      <div style="width:34px"></div>
     </div>
     <span id="month-title" style="font-size:14px;font-weight:400">2026年 5月</span>
-    <div style="width:60px;display:flex;justify-content:flex-end;align-items:center;gap:6px">
+    <div style="width:80px;display:flex;justify-content:flex-end;align-items:center;gap:6px">
       <button class="nav-btn" onclick="nextMonth()">›</button>
       <button onclick="goToday(&#39;month&#39;)" style="background:#009261;color:white;border:none;border-radius:7px;padding:4px 8px;font-size:11px;font-weight:600;white-space:nowrap">今日</button>
     </div>
@@ -129,11 +130,12 @@ select { font-family: inherit; }
 
 <div id="view-week" class="hidden">
   <div class="nav-row">
-    <div style="width:60px;display:flex;justify-content:flex-start">
+    <div style="width:80px;display:flex;justify-content:flex-start;align-items:center;gap:6px">
       <button class="nav-btn" onclick="prevWeek()">‹</button>
+      <div style="width:34px"></div>
     </div>
     <span id="week-title" style="font-size:14px;font-weight:400"></span>
-    <div style="width:60px;display:flex;justify-content:flex-end;align-items:center;gap:6px">
+    <div style="width:80px;display:flex;justify-content:flex-end;align-items:center;gap:6px">
       <button class="nav-btn" onclick="nextWeek()">›</button>
       <button onclick="goToday(&#39;week&#39;)" style="background:#009261;color:white;border:none;border-radius:7px;padding:4px 8px;font-size:11px;font-weight:600;white-space:nowrap">今日</button>
     </div>
