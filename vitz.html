@@ -73,17 +73,17 @@ select { font-family: inherit; }
 <body>
 
 <div id="header">
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+  <div style="display:flex;align-items:center;gap:10px">
     <span style="font-size:26px">🚗</span>
     <div style="flex:1"><h1>Vitz予約</h1></div>
-  </div>
-  <div style="display:flex;gap:8px">
-    <button class="user-btn" id="btn-father" onclick="selectUser('father')">
-      <span style="font-size:19px">👨</span>博
-    </button>
-    <button class="user-btn" id="btn-mother" onclick="selectUser('mother')">
-      <span style="font-size:19px">👩</span>恭子
-    </button>
+    <div style="display:flex;gap:6px">
+      <button class="user-btn" id="btn-father" onclick="selectUser('father')" style="padding:6px 10px;border-radius:9px;font-size:12px;gap:4px;white-space:nowrap;min-width:70px;justify-content:center">
+        <span style="font-size:15px">👨</span>博
+      </button>
+      <button class="user-btn" id="btn-mother" onclick="selectUser('mother')" style="padding:6px 10px;border-radius:9px;font-size:12px;gap:4px;white-space:nowrap;min-width:70px;justify-content:center">
+        <span style="font-size:15px">👩</span>恭子
+      </button>
+    </div>
   </div>
   <div id="hint" style="display:none"></div>
 </div>
